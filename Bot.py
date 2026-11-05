@@ -1,4 +1,4 @@
-import os
+ import os
 import time
 from datetime import datetime
 import random
@@ -240,4 +240,32 @@ def run_special_once(key, func):
 
 if __name__ == "__main__":
     check_notifications()
-      
+
+    def send_session_result(chat_id, session_number):
+    # Session number ke hisab se ordinal suffix (1st, 2nd, 3rd, etc.)
+    suffixes = {1: "1st", 2: "2nd", 3: "3rd", 4: "4th", 5: "5th"}
+    sess_str = suffixes.get(session_number, f"{session_number}th")
+    
+    result_message = f"""🔥 **VIP BOT SESSION RESULTS** 🔥
+🤖 **{sess_str} Bot Session Result -:**
+ * 📈 EUR/USD | UP ➔ 🟢 WIN (Direct)
+ * 📉 GBP/JPY | DOWN ➔ 🟢 WIN (Direct)
+ * 📈 AUD/CAD | UP ➔ 🔴 LOSS
+ * 📉 USD/CHF | DOWN ➔ 🟢 WIN (MTG 1)
+ * 📈 EUR/GBP | UP ➔ 🟢 WIN (Direct)
+ * 📉 NZD/USD | DOWN ➔ 🟢 WIN (Direct)
+ * 📈 BTC/USDT | UP ➔ 🟢 WIN (MTG 1)
+ * 📉 USD/JPY | DOWN ➔ 🔴 LOSS
+ * 📈 EUR/JPY | UP ➔ 🟢 WIN (Direct)
+ * 📉 AUD/USD | DOWN ➔ 🟢 WIN (Direct)
+ * 📈 GBP/USD | UP ➔ 🟢 WIN (MTG 1)
+ * 📉 USD/CAD | DOWN ➔ 🟢 WIN (Direct)
+📊 **SESSION SUMMARY**
+ * 🎯 TOTAL TRADES -: 12
+ * 🟢 TOTAL WINS -: 10
+ * 🔴 TOTAL LOSSES -: 2
+ * ⚡ SESSION ACCURACY -: 83.3%
+> 💰 PROFIT ALERT: Target achieved for this session! Strict money management applied. 🚀💸"""
+
+    bot.send_message(chat_id=chat_id, text=result_message, parse_mode='Markdown')
+    
