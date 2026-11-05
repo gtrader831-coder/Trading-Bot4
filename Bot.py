@@ -1,4 +1,4 @@
- import os
+mport os
 import time
 from datetime import datetime
 import random
@@ -212,60 +212,4 @@ Market Closed / Sessions Completed
     if hour == 9:
         run_vip_session("1st", "09:00 AM Session")
     elif hour == 12:
-        run_vip_session("2nd", "12:00 PM Session")
-    elif hour == 14:
-        run_vip_session("3rd", "02:00 PM Session")
-    elif hour == 18:
-        run_vip_session("4th", "06:00 PM Session")
-    elif hour == 23:
-        run_vip_session("5th", "11:00 PM Session")
-
-def run_special_once(key, func):
-    tracker_file = "special_tracker.txt"
-    today = datetime.now().strftime("%Y-%m-%d")
-    completed = []
-    if os.path.exists(tracker_file):
-        with open(tracker_file, "r") as f:
-            content = f.read().strip()
-            if content:
-                d, keys = content.split("|")
-                if d == today:
-                    completed = keys.split(",") if keys else []
-    
-    if key not in completed:
-        func()
-        completed.append(key)
-        with open(tracker_file, "w") as f:
-            f.write(f"{today}|{','.join(completed)}")
-
-if __name__ == "__main__":
-    check_notifications()
-
-    def send_session_result(chat_id, session_number):
-    # Session number ke hisab se ordinal suffix (1st, 2nd, 3rd, etc.)
-    suffixes = {1: "1st", 2: "2nd", 3: "3rd", 4: "4th", 5: "5th"}
-    sess_str = suffixes.get(session_number, f"{session_number}th")
-    
-    result_message = f"""🔥 **VIP BOT SESSION RESULTS** 🔥
-🤖 **{sess_str} Bot Session Result -:**
- * 📈 EUR/USD | UP ➔ 🟢 WIN (Direct)
- * 📉 GBP/JPY | DOWN ➔ 🟢 WIN (Direct)
- * 📈 AUD/CAD | UP ➔ 🔴 LOSS
- * 📉 USD/CHF | DOWN ➔ 🟢 WIN (MTG 1)
- * 📈 EUR/GBP | UP ➔ 🟢 WIN (Direct)
- * 📉 NZD/USD | DOWN ➔ 🟢 WIN (Direct)
- * 📈 BTC/USDT | UP ➔ 🟢 WIN (MTG 1)
- * 📉 USD/JPY | DOWN ➔ 🔴 LOSS
- * 📈 EUR/JPY | UP ➔ 🟢 WIN (Direct)
- * 📉 AUD/USD | DOWN ➔ 🟢 WIN (Direct)
- * 📈 GBP/USD | UP ➔ 🟢 WIN (MTG 1)
- * 📉 USD/CAD | DOWN ➔ 🟢 WIN (Direct)
-📊 **SESSION SUMMARY**
- * 🎯 TOTAL TRADES -: 12
- * 🟢 TOTAL WINS -: 10
- * 🔴 TOTAL LOSSES -: 2
- * ⚡ SESSION ACCURACY -: 83.3%
-> 💰 PROFIT ALERT: Target achieved for this session! Strict money management applied. 🚀💸"""
-
-    bot.send_message(chat_id=chat_id, text=result_message, parse_mode='Markdown')
-    
+        run_vip_session("pa
