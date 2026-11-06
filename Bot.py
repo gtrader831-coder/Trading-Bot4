@@ -30,17 +30,15 @@ def send_telegram(text):
 
 def run_session(session_name):
     send_telegram(
-        """🚨 VIP SESSION IS LIVE NOW! 🟢🔥
+        f"""🟢 **VIP SESSION STARTING!** 🔥🚀
 
-⚡ SESSION HAS STARTED!
+🎯 **{session_name} Session is LIVE Now!**
 
-"Keep your focus high and emotions low. Patience pays!" 🎯📈
+"Keep your focus high and emotions low. Patience pays!" 💎📈
 
-💻 STATUS -: Session In Progress
-
-⏳ ACTION -: Wait for the Signal!
-
-🛡️ RULE -: Strict Money Management (2%-5% Capital)
+💻 **STATUS:** Session In Progress
+⏳ **ACTION:** Wait for the Signal!
+🛡️ **RULE:** Strict Money Management (2%-5% Capital)
 
 📢 Keep your terminals open and stay alert! First trade signal is dropping any second... 🚀💰"""
     )
@@ -57,16 +55,14 @@ def run_session(session_name):
 
         # Signal sent 20 seconds before trade execution
         send_telegram(
-            f"""📊 TRADE SIGNAL SETUP (ADVANCE ALERT)
+            f"""📊 **TRADE SIGNAL SETUP (ADVANCE ALERT)**
 
-PAIR NAME -: {pair}
+ペア **PAIR NAME:** `{pair}`
+⏱️ **TIME FRAME:** 1 Minute
+📈 **DIRECTION:** {direction}
 
-TIME FRAME -: 1 Minute
-
-DIRECTION -: {direction}
-
-⚠️ GET READY! (Sent 20s early for perfect entry)
-Always use proper risk management (Max 2% to 5% of total capital per trade). Stick to a disciplined martingale plan only if your strategy requires it, and never chase losses blindly! 🚀💰"""
+⚠️ **GET READY!** (Sent 20s early for perfect entry)
+Always use proper risk management (Max 2% to 5% of total capital per trade). Stick to a disciplined plan and never chase losses blindly! 🚀💰"""
         )
 
         # Wait for trade duration (1 minute)
@@ -75,22 +71,22 @@ Always use proper risk management (Max 2% to 5% of total capital per trade). Sti
         is_win = random.choice([True, True, True, False])
         if is_win:
             win_type = random.choice(["Direct Win", "MTG 1"])
-            result_str = f"🟢 PROFIT (ITM) | {win_type}"
-            trade_log = f"{pair} ➔ 🟢 WIN ({win_type})"
+            result_str = f"🟢 **PROFIT (ITM)** | {win_type}"
+            trade_log = f"`{pair}` ➔ 🟢 **WIN ({win_type})**"
             total_wins += 1
         else:
-            result_str = "🔴 LOSS (OTM)"
-            trade_log = f"{pair} ➔ 🔴 LOSS"
+            result_str = "🔴 **LOSS (OTM)**"
+            trade_log = f"`{pair}` ➔ 🔴 **LOSS**"
             total_losses += 1
 
         results_summary.append(trade_log)
 
         send_telegram(
-            f"""📊 TRADE RESULT UPDATE
+            f"""📊 **TRADE RESULT UPDATE**
 
-TRADE RESULT -: {result_str}
+✨ **RESULT:** {result_str}
 
-💡 PRO TIP: Market mein losses bhi trading ka part hote hain. Proper money management (2%-5%) aur compound discipline hi long-term success ki key hai! 🚀💰"""
+💡 **PRO TIP:** Market mein losses bhi trading ka part hote hain. Proper money management aur compound discipline hi long-term success ki key hai! 🚀💰"""
         )
 
         if i < 11:
@@ -98,17 +94,14 @@ TRADE RESULT -: {result_str}
             time.sleep(280)
 
     send_telegram(
-        """🔴 VIP SESSION CLOSED! 🔚✨
+        f"""🔴 **VIP SESSION CLOSED!** 🔚✨
 
-📊 SESSION COMPLETED
+📊 **SESSION COMPLETED**
 
 "Consistency over intensity. Secure your profit and exit the market!" 🎯📈
 
-💼 STATUS -: All Trades Wrapped Up
-
-🛡️ RULE -: Close your terminal now — Do NOT overtrade!
-
-🧠 MINDSET -: Respect your daily target and protect your capital.
+💼 **STATUS:** All Trades Wrapped Up
+🛡️ **RULE:** Close your terminal now — Do NOT overtrade!
 
 🎉 Great job today, team! Take your profits, relax, and get ready for the next session. See you soon! 🚀💰"""
     )
@@ -119,20 +112,19 @@ TRADE RESULT -: {result_str}
     results_text = "\n".join(results_summary)
 
     send_telegram(
-        f"""🔥 VIP BOT SESSION RESULTS 🔥
+        f"""🔥 **VIP BOT SESSION RESULTS** 🔥
 
-🤖 {session_name} Bot Session Result -:
+🤖 **{session_name} Session Summary Report:**
 
 {results_text}
 
-📊 SESSION SUMMARY
-🎯 TOTAL TRADES -: 12
-🟢 TOTAL WINS -: {total_wins}
-🔴 TOTAL LOSSES -: {total_losses}
+📊 **SESSION STATISTICS**
+🎯 **TOTAL TRADES:** 12
+🟢 **TOTAL WINS:** {total_wins}
+🔴 **TOTAL LOSSES:** {total_losses}
+⚡ **ACCURACY:** {accuracy}%
 
-⚡ SESSION ACCURACY -: {accuracy}%
-
-💰 PROFIT ALERT: Target achieved for this session! Strict money management applied. 🚀💸"""
+💰 **PROFIT ALERT:** Target achieved for this session! Strict money management applied. 🚀💸"""
     )
 
 utc_now = datetime.datetime.utcnow()
@@ -141,33 +133,30 @@ current_hour = ist_now.hour
 
 if current_hour == 7:
     send_telegram(
-        """🌅 RISE AND SHINE TRADERS! ☕🔥
+        """🌅 **GOOD MORNING, TRADERS!** ☕🔥
 
-🌟 MORNING BRIEFING & FOCUS
+🌟 **New Day — New Goals — New Profits!**
+Aaj ka maqsad sirf aik: **Disciplined Trading & Consistent Growth** 💎📈
 
-"Consistency is the bridge between goals and wealth." 💎📈
+🎯 **MINDSET:** Calm, Focused & Disciplined
+⚠️ **REMINDER:** Never chase losses. Protect capital first!
 
-🎯 MINDSET -: Calm, Focused & Disciplined
-⚠️ REMINDER -: Never chase losses. Protect capital first!
-
-🚀 MISSION -: Follow the signals, execute with precision, and secure the profits.
-
-⏰ Get your terminals ready! Today's VIP sessions are locked and loaded. Let's start the day in pure GREEN! 💸🍀"""
+🚀 Get your terminals ready! Today's VIP sessions are locked and loaded. Let's start the day in pure GREEN! 💸🍀"""
     )
 
 elif current_hour == 8:
     send_telegram(
-        """👑 TODAY BOT SESSION SCHEDULE 👑
+        """👑 **TODAY BOT SESSION SCHEDULE** 👑
 
-⏰ DAILY SESSION TIMINGS
+⏰ **DAILY SESSION TIMINGS (UTC +5:30):**
 
-🌅 1st Session -: 09:00 AM
-☀️ 2nd Session -: 12:00 PM
-🌤️ 3rd Session -: 02:00 PM
-🌇 4th Session -: 06:00 PM
-🌙 5th Session -: 11:00 PM
+🟢 **1st Session:** 09:00 AM
+🟢 **2nd Session:** 12:00 PM
+🟢 **3rd Session:** 02:00 PM
+🟢 **4th Session:** 06:00 PM
+🟢 **5th Session:** 11:00 PM
 
-⚠️ IMPORTANT NOTE: Be online 5 minutes before the session time! Follow strict money management and protect your capital. 🚀💰"""
+⚠️ **IMPORTANT:** Be online 5 minutes before the session time! Follow strict money management and protect your capital. 🚀💰"""
     )
 
 elif current_hour == 9:
@@ -185,16 +174,12 @@ elif current_hour == 0:
     send_telegram(
         """GOOD NIGHT VIP FAMILY! 🌌✨
 
-💤 END OF DAY WRAP-UP
+💤 **END OF DAY WRAP-UP**
 
 "Discipline today brings financial freedom tomorrow." 💎📈
 
-📊 TODAY'S STATUS -: 
-Market Closed / Sessions Completed
-
-🧠 MINDSET -: Rest well, recharge, and come back stronger tomorrow.
-
-🛡️ REMINDER -: Protect your peace and your capital. Tomorrow is a new opportunity!
+📊 **TODAY'S STATUS:** Market Closed / Sessions Completed
+🧠 **MINDSET:** Rest well, recharge, and come back stronger tomorrow.
 
 ⭐ Sleep tight and get ready for another massive green day ahead! Good night, traders! 🚀💰"""
     )
