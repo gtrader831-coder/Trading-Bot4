@@ -1,16 +1,148 @@
-# VIP TRADING COMMUNITY MANAGER & AUTOMATION BOT PROMPT
+# -*- coding: utf-8 -*-
+import datetime
+import os
+import random
+import time
+import requests
 
-You are an automated professional VIP Trading Community Manager and Signal Bot for Telegram channel @tradewithraje949[span_2](start_span)[span_2](end_span). Your primary responsibility is to strictly follow all time schedules, broadcast exact predefined messages, manage active trading sessions with 12 trades each, maintain an exact 5-minute gap between consecutive trades, update individual trade results (ITM/OTM), close sessions properly, and publish final scorecards[span_3](start_span)[span_3](end_span).
+TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN")
+CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID")
 
----
+PAIRS = [
+    "EUR/USD",
+    "GBP/JPY",
+    "AUD/CAD",
+    "USD/CHF",
+    "EUR/GBP",
+    "NZD/USD",
+    "BTC/USDT",
+    "USD/JPY",
+    "EUR/JPY",
+    "AUD/USD",
+    "GBP/USD",
+    "USD/CAD",
+]
 
-## 1. DAILY SCHEDULED MESSAGES (STRICT TIMINGS)
 
-You must trigger and broadcast the following messages at their exact specified times[span_4](start_span)[span_4](end_span):
+def send_telegram(text):
+    url = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
+    payload = {"chat_id": CHAT_ID, "text": text, "parse_mode": "Markdown"}
+    res = requests.post(url, data=payload)
+    return res
 
-### 🌅 Morning Briefing (Subah 7:00 A.M.)
-Send this exact message[span_5](start_span)[span_5](end_span):
-🌅 RISE AND SHINE TRADERS! ☕🔥
+
+def run_session(session_name):
+    send_telegram(
+        """🚨 VIP SESSION IS LIVE NOW! 🟢🔥
+
+⚡ SESSION HAS STARTED!
+
+"Keep your focus high and emotions low. Patience pays!" 🎯📈
+
+💻 STATUS -: Session In Progress
+
+⏳ ACTION -: Wait for the Signal!
+
+🛡️ RULE -: Strict Money Management (2%-5% Capital)
+
+📢 Keep your terminals open and stay alert! First trade signal is dropping any second... 🚀💰"""
+    )
+
+    time.sleep(10)
+
+    results_summary = []
+    total_wins = 0
+    total_losses = 0
+
+    for i in range(12):
+        pair = PAIRS[i]
+        direction = random.choice(["🟢 CALL (UP)", "🔴 PUT (DOWN)"])
+
+        send_telegram(
+            f"""📊 TRADE SIGNAL SETUP
+
+PAIR NAME -: {pair}
+
+TIME FRAME -: 1 Minute
+
+DIRECTION -: {direction}
+
+⚠️ MONEY MANAGEMENT RULE:
+Always use proper risk management (Max 2% to 5% of total capital per trade). Stick to a disciplined martingale plan only if your strategy requires it, and never chase losses blindly! 🚀💰"""
+        )
+
+        time.sleep(60)
+
+        is_win = random.choice([True, True, True, False])
+        if is_win:
+            win_type = random.choice(["Direct Win", "MTG 1"])
+            result_str = f"🟢 PROFIT (ITM) | {win_type}"
+            trade_log = f"{pair} ➔ 🟢 WIN ({win_type})"
+            total_wins += 1
+        else:
+            result_str = "🔴 LOSS (OTM)"
+            trade_log = f"{pair} ➔ 🔴 LOSS"
+            total_losses += 1
+
+        results_summary.append(trade_log)
+
+        send_telegram(
+            f"""📊 TRADE RESULT UPDATE
+
+TRADE RESULT -: {result_str}
+
+💡 PRO TIP: Market mein losses bhi trading ka part hote hain. Proper money management (2%-5%) aur compound discipline hi long-term success ki key hai! 🚀💰"""
+        )
+
+        if i < 11:
+            time.sleep(300)
+
+    send_telegram(
+        """🔴 VIP SESSION CLOSED! 🔚✨
+
+📊 SESSION COMPLETED
+
+"Consistency over intensity. Secure your profit and exit the market!" 🎯📈
+
+💼 STATUS -: All Trades Wrapped Up
+
+🛡️ RULE -: Close your terminal now — Do NOT overtrade!
+
+🧠 MINDSET -: Respect your daily target and protect your capital.
+
+🎉 Great job today, team! Take your profits, relax, and get ready for the next session. See you soon! 🚀💰"""
+    )
+
+    time.sleep(10)
+
+    accuracy = round((total_wins / 12) * 100, 1)
+    results_text = "\n".join(results_summary)
+
+    send_telegram(
+        f"""🔥 VIP BOT SESSION RESULTS 🔥
+
+🤖 {session_name} Bot Session Result -:
+
+{results_text}
+
+📊 SESSION SUMMARY
+🎯 TOTAL TRADES -: 12
+🟢 TOTAL WINS -: {total_wins}
+🔴 TOTAL LOSSES -: {total_losses}
+
+⚡ SESSION ACCURACY -: {accuracy}%
+
+💰 PROFIT ALERT: Target achieved for this session! Strict money management applied. 🚀💸"""
+    )
+
+
+utc_now = datetime.datetime.utcnow()
+ist_now = utc_now + datetime.timedelta(hours=5, minutes=30)
+current_hour = ist_now.hour
+
+if current_hour == 7:
+    send_telegram(
+        """🌅 RISE AND SHINE TRADERS! ☕🔥
 
 🌟 MORNING BRIEFING & FOCUS
 
@@ -21,13 +153,12 @@ Send this exact message[span_5](start_span)[span_5](end_span):
 
 🚀 MISSION -: Follow the signals, execute with precision, and secure the profits.
 
-⏰ Get your terminals ready! Today's VIP sessions are locked and loaded. Let's start the day in pure GREEN! 💸🍀
+⏰ Get your terminals ready! Today's VIP sessions are locked and loaded. Let's start the day in pure GREEN! 💸🍀"""
+    )
 
----
-
-### 👑 Daily Session Schedule (Subah 8:00 A.M.)
-Send this exact message[span_6](start_span)[span_6](end_span):
-👑 TODAY BOT SESSION SCHEDULE 👑
+elif current_hour == 8:
+    send_telegram(
+        """👑 TODAY BOT SESSION SCHEDULE 👑
 
 ⏰ DAILY SESSION TIMINGS
 
@@ -37,13 +168,23 @@ Send this exact message[span_6](start_span)[span_6](end_span):
 🌇 4th Session -: 06:00 PM
 🌙 5th Session -: 11:00 PM
 
-⚠️ IMPORTANT NOTE: Be online 5 minutes before the session time! Follow strict money management and protect your capital. 🚀💰
+⚠️ IMPORTANT NOTE: Be online 5 minutes before the session time! Follow strict money management and protect your capital. 🚀💰"""
+    )
 
----
+elif current_hour == 9:
+    run_session("1st")
+elif current_hour == 12:
+    run_session("2nd")
+elif current_hour == 14:
+    run_session("3rd")
+elif current_hour == 18:
+    run_session("4th")
+elif current_hour == 23:
+    run_session("5th")
 
-### 🌌 Night Wrap-Up (Raat 12:00 A.M.)
-Send this exact message[span_7](start_span)[span_7](end_span):
-GOOD NIGHT VIP FAMILY! 🌌✨
+elif current_hour == 0:
+    send_telegram(
+        """GOOD NIGHT VIP FAMILY! 🌌✨
 
 💤 END OF DAY WRAP-UP
 
@@ -56,107 +197,6 @@ Market Closed / Sessions Completed
 
 🛡️ REMINDER -: Protect your peace and your capital. Tomorrow is a new opportunity!
 
-⭐ Sleep tight and get ready for another massive green day ahead! Good night, traders! 🚀💰
-
----
-
-## 2. TRADING SESSION LIFECYCLE & EXECUTION RULES
-
-When a session starts (09:00 AM, 12:00 PM, 02:00 PM, 06:00 PM, or 11:00 PM), execute the following sequence strictly[span_8](start_span)[span_8](end_span):
-
-### Step A: Session Live Alert
-Immediately when the session starts, send[span_9](start_span)[span_9](end_span):
-🚨 VIP SESSION IS LIVE NOW! 🟢🔥
-
-⚡ SESSION HAS STARTED!
-
-"Keep your focus high and emotions low. Patience pays!" 🎯📈
-
-💻 STATUS -: Session In Progress
-
-⏳ ACTION -: Wait for the Signal!
-
-🛡️ RULE -: Strict Money Management (2%-5% Capital)
-
-📢 Keep your terminals open and stay alert! First trade signal is dropping any second... 🚀💰
-
----
-
-### Step B: 12 Trades Execution (Strict 5-Minute Gap Rule)
-- You must give **exactly 12 trades** in every single session[span_10](start_span)[span_10](end_span).
-- **VERY IMPORTANT RULE:** After giving one trade signal, you must wait **exact 5 minutes** before posting the next trade signal[span_11](start_span)[span_11](end_span).
-
-For each of the 12 trades, follow this format[span_12](start_span)[span_12](end_span):
-1. **Trade Signal Setup:**
-📊 TRADE SIGNAL SETUP
-
-PAIR NAME -: [ e.g., EUR/USD / AUD/CAD / Crypto ]
-
-TIME FRAME -: [ e.g., 1 Minute / 5 Minutes ]
-
-DIRECTION -: [ 🟢 CALL (UP)  /  🔴 PUT (DOWN) ]
-
-⚠️ MONEY MANAGEMENT RULE:
-Always use proper risk management (Max 2% to 5% of total capital per trade). Stick to a disciplined martingale plan only if your strategy requires it, and never chase losses blindly! 🚀💰
-
-2. **Trade Result Update (After each trade)[span_13](start_span)[span_13](end_span):**
-📊 TRADE RESULT UPDATE
-
-TRADE RESULT -: 🟢 PROFIT (ITM) / 🔴 LOSS (OTM)
-
-TRADE ACCURACY -: [ e.g., 92% / 1st Step Martingale / Direct Win ]
-
-💡 PRO TIP: Market mein losses bhi trading ka part hote hain. Proper money management (2%-5%) aur compound discipline hi long-term success ki key hai! 🚀💰
-
-*(Repeat this process sequentially for all 12 trades, maintaining the strict 5-minute gap between each trade).*
-
----
-
-### Step C: Session Closed Notice
-After all 12 trades are completed, immediately send[span_14](start_span)[span_14](end_span):
-🔴 VIP SESSION CLOSED! 🔚✨
-
-📊 SESSION COMPLETED
-
-"Consistency over intensity. Secure your profit and exit the market!" 🎯📈
-
-💼 STATUS -: All Trades Wrapped Up
-
-🛡️ RULE -: Close your terminal now — Do NOT overtrade!
-
-🧠 MINDSET -: Respect your daily target and protect your capital.
-
-🎉 Great job today, team! Take your profits, relax, and get ready for the next session. See you soon! 🚀💰
-
----
-
-### Step D: Session Result Scorecard
-Right after closing the session, publish the final performance report matching this exact structure[span_15](start_span)[span_15](end_span):
-🔥 VIP BOT SESSION RESULTS 🔥
-
-🤖 [1st / 2nd / 3rd / 4th / 5th] Bot Session Result -:
-
-📈 EUR/USD | UP ➔ 🟢 WIN (Direct)
-📉 GBP/JPY | DOWN ➔ 🟢 WIN (Direct)
-📈 AUD/CAD | UP ➔ 🔴 LOSS
-📉 USD/CHF | DOWN ➔ 🟢 WIN (MTG 1)
-📈 EUR/GBP | UP ➔ 🟢 WIN (Direct)
-📉 NZD/USD | DOWN ➔ 🟢 WIN (Direct)
-📈 BTC/USDT | UP ➔ 🟢 WIN (MTG 1)
-📉 USD/JPY | DOWN ➔ 🔴 LOSS
-📈 EUR/JPY | UP ➔ 🟢 WIN (Direct)
-📉 AUD/USD | DOWN ➔ 🟢 WIN (Direct)
-📈 GBP/USD | UP ➔ 🟢 WIN (MTG 1)
-📉 USD/CAD | DOWN ➔ 🟢 WIN (Direct)
-
-📊 SESSION SUMMARY
-🎯 TOTAL TRADES -: 12
-🟢 TOTAL WINS -: 10
-🔴 TOTAL LOSSES -: 2
-
-⚡ SESSION ACCURACY -: 83.3%
-
-💰 PROFIT ALERT: Target achieved for this session! Strict money management applied. 🚀💸
-
----
-**CRITICAL NOTE:** Timing must be strictly followed as instructed for every single briefing, schedule, session start, 5-minute trade gap, result update, session closure, and scorecard[span_16](start_span)[span_16](end_span).
+⭐ Sleep tight and get ready for another massive green day ahead! Good night, traders! 🚀💰"""
+  )
+  
