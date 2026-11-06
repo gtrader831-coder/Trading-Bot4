@@ -55,8 +55,9 @@ def run_session(session_name):
         pair = PAIRS[i]
         direction = random.choice(["🟢 CALL (UP)", "🔴 PUT (DOWN)"])
 
+        # Signal sent 20 seconds before trade execution
         send_telegram(
-            f"""📊 TRADE SIGNAL SETUP
+            f"""📊 TRADE SIGNAL SETUP (ADVANCE ALERT)
 
 PAIR NAME -: {pair}
 
@@ -64,10 +65,11 @@ TIME FRAME -: 1 Minute
 
 DIRECTION -: {direction}
 
-⚠️ MONEY MANAGEMENT RULE:
+⚠️ GET READY! (Sent 20s early for perfect entry)
 Always use proper risk management (Max 2% to 5% of total capital per trade). Stick to a disciplined martingale plan only if your strategy requires it, and never chase losses blindly! 🚀💰"""
         )
 
+        # Wait for trade duration (1 minute)
         time.sleep(60)
 
         is_win = random.choice([True, True, True, False])
@@ -92,7 +94,8 @@ TRADE RESULT -: {result_str}
         )
 
         if i < 11:
-            time.sleep(300) # Exact 5 minutes gap between trades
+            # 5 minutes total gap minus 20 seconds advance notice = 280 seconds
+            time.sleep(280)
 
     send_telegram(
         """🔴 VIP SESSION CLOSED! 🔚✨
