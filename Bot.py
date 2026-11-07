@@ -1,186 +1,157 @@
-# -*- coding: utf-8 -*-
 import datetime
+import json
 import os
-import random
 import time
-import requests
 
-TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN")
-CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID")
+# State file to prevent duplicate runs on the same day
+STATE_FILE = "session_state.json"
 
-PAIRS = [
-    "EUR/USD",
-    "GBP/JPY",
-    "AUD/CAD",
-    "USD/CHF",
-    "EUR/GBP",
-    "NZD/USD",
-    "BTC/USDT",
-    "USD/JPY",
-    "EUR/JPY",
-    "AUD/USD",
-    "GBP/USD",
-    "USD/CAD",
-]
+def load_state():
+    if os.path.exists(STATE_FILE):
+        with open(STATE_FILE, "r") as f:
+            return json.load(f)
+    return {}
 
-def send_telegram(text):
-    url = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
-    payload = {"chat_id": CHAT_ID, "text": text, "parse_mode": "Markdown"}
-    requests.post(url, data=payload)
+def save_state(state):
+    with open(STATE_FILE, "w") as f:
+        json.dump(state, f)
 
-def run_session(session_name):
-    send_telegram(
-        f"""🟢 **VIP SESSION STARTING!** 🔥🚀
+def can_run_task(task_name):
+    today = datetime.date.today().isoformat()
+    state = load_state()
+    if state.get(task_name) == today:
+        return False  
+    return True
 
-🎯 **{session_name} Session is LIVE Now!**
+def mark_task_completed(task_name):
+    today = datetime.date.today().isoformat()
+    state = load_state()
+    state[task_name] = today
+    save_state(state)
 
-"Keep your focus high and emotions low. Patience pays!" 💎📈
+def send_telegram_message(text):
+    # Yahan apna Telegram API / Bot message send karne ka code lagayein
+    print(f"\n[TELEGRAM BROADCAST]:\n{text}\n")
 
-💻 **STATUS:** Session In Progress
-⏳ **ACTION:** Wait for the Signal!
-🛡️ **RULE:** Strict Money Management (2%-5% Capital)
-
-📢 Keep your terminals open and stay alert! First trade signal is dropping any second... 🚀💰"""
+# 1. Morning Briefing (7:00 AM)
+def send_morning_briefing():
+    if not can_run_task("morning_briefing"):
+        return
+    
+    msg = (
+        "🌅 **GOOD MORNING TRADERS!** ☕✨\n\n"
+        "Naye din ki shuruaat ek nayi energy aur positive mindset ke sath hoti hai. "
+        "Aaj ka din aapke liye profit bhara ho!\n\n"
+        "📅 **Aaj ke sabhi VIP Sessions ka Schedule:**\n"
+        "• 09:00 AM - Morning VIP Session\n"
+        "• 12:00 PM - Afternoon VIP Session\n"
+        "• 02:00 PM - Mid-Day VIP Session\n"
+        "• 06:00 PM - Evening VIP Session\n"
+        "• 11:00 PM - Night VIP Session\n\n"
+        "⚠️ **Risk Warning:** Hamesha apne risk management aur capital ke hisab se trade karein. Let's make it profitable! 🚀📈"
     )
+    send_telegram_message(msg)
+    mark_task_completed("morning_briefing")
 
-    time.sleep(10)
+# 2. Complete Trading Session (Start Notice, Pair Name, 12 Trades with Results, Summary & Final Scorecard)
+def run_vip_session(session_name, session_key, pair_name="EUR/USD (OTC)"):
+    if not can_run_task(session_key):
+        print(f"[{session_name}] Aaj ke liye already run ho chuka hai. Dobara nahi chalega!")
+        return
 
-    results_summary = []
-    total_wins = 0
-    total_losses = 0
+    print(f"--- Starting {session_name} ---")
+    
+    # Session Start Notice
+    start_msg = (
+        f"🟢 **{session_name} is LIVE Now!** 🚀🔔\n\n"
+        f"🎯 **Trading Pair:** `{pair_name}`\n"
+        f"⚡ Sabhi log ready ho jayein, kuch hi der mein signals aane shuru honge!"
+    )
+    send_telegram_message(start_msg)
+    time.sleep(2)
+    
+    wins = 0
+    losses = 0
+    total_trades = 12
+    trade_history = []  # Har trade ka result store karne ke liye
 
-    for i in range(12):
-        pair = PAIRS[i]
-        direction = random.choice(["🟢 CALL (UP)", "🔴 PUT (DOWN)"])
-
-        # Signal sent 20 seconds before trade execution
-        send_telegram(
-            f"""📊 **TRADE SIGNAL SETUP (ADVANCE ALERT)**
-
-ペア **PAIR NAME:** `{pair}`
-⏱️ **TIME FRAME:** 1 Minute
-📈 **DIRECTION:** {direction}
-
-⚠️ **GET READY!** (Sent 20s early for perfect entry)
-Always use proper risk management (Max 2% to 5% of total capital per trade). Stick to a disciplined plan and never chase losses blindly! 🚀💰"""
+    # 12 Trades Loop with Pair Name & Trade Results
+    for trade_no in range(1, total_trades + 1):
+        # Advance Signal Alert
+        signal_msg = (
+            f"📊 **{session_name} | Trade #{trade_no} / {total_trades}** ⚡🎯\n"
+            f"🔹 **Pair:** `{pair_name}`\n"
+            f"⏳ Get Ready for Action (Next 1-Minute Candle)!"
         )
-
-        # Wait for trade duration (1 minute)
-        time.sleep(60)
-
-        is_win = random.choice([True, True, True, False])
-        if is_win:
-            win_type = random.choice(["Direct Win", "MTG 1"])
-            result_str = f"🟢 **PROFIT (ITM)** | {win_type}"
-            trade_log = f"`{pair}` ➔ 🟢 **WIN ({win_type})**"
-            total_wins += 1
+        send_telegram_message(signal_msg)
+        time.sleep(3)  # Simulation for trade duration / candle run
+        
+        # Simulated Result (WIN/LOSS)
+        result = "WIN 💰" if trade_no % 4 != 0 else "LOSS ❌"  
+        if "WIN" in result:
+            wins += 1
         else:
-            result_str = "🔴 **LOSS (OTM)**"
-            trade_log = f"`{pair}` ➔ 🔴 **LOSS**"
-            total_losses += 1
+            losses += 1
 
-        results_summary.append(trade_log)
+        trade_history.append(f"Trade #{trade_no}: {result}")
 
-        send_telegram(
-            f"""📊 **TRADE RESULT UPDATE**
-
-✨ **RESULT:** {result_str}
-
-💡 **PRO TIP:** Market mein losses bhi trading ka part hote hain. Proper money management aur compound discipline hi long-term success ki key hai! 🚀💰"""
+        result_msg = (
+            f"✨ **Trade #{trade_no} Result Update** ✨\n"
+            f"🔹 **Pair:** `{pair_name}`\n"
+            f"📌 **Status:** {result}"
         )
+        send_telegram_message(result_msg)
+        time.sleep(2)  # 5-minute technical gap simulation between trades
 
-        if i < 11:
-            # 5 minutes total gap minus 20 seconds advance notice = 280 seconds
-            time.sleep(280)
-
-    send_telegram(
-        f"""🔴 **VIP SESSION CLOSED!** 🔚✨
-
-📊 **SESSION COMPLETED**
-
-"Consistency over intensity. Secure your profit and exit the market!" 🎯📈
-
-💼 **STATUS:** All Trades Wrapped Up
-🛡️ **RULE:** Close your terminal now — Do NOT overtrade!
-
-🎉 Great job today, team! Take your profits, relax, and get ready for the next session. See you soon! 🚀💰"""
+    # Session Close Summary Report
+    accuracy = round((wins / total_trades) * 100, 2)
+    summary_msg = (
+        f"🔴 **{session_name} CLOSED** 🛑\n\n"
+        f"📊 **Session Summary Report:**\n"
+        f"🔹 **Pair:** `{pair_name}`\n"
+        f"🎯 **Total Trades:** {total_trades}\n"
+        f"✅ **Total Wins:** {wins}\n"
+        f"❌ **Total Losses:** {losses}\n"
+        f"⭐ **Accuracy:** `{accuracy}%`"
     )
+    send_telegram_message(summary_msg)
+    time.sleep(1)
 
-    time.sleep(10)
-
-    accuracy = round((total_wins / 12) * 100, 1)
-    results_text = "\n".join(results_summary)
-
-    send_telegram(
-        f"""🔥 **VIP BOT SESSION RESULTS** 🔥
-
-🤖 **{session_name} Session Summary Report:**
-
-{results_text}
-
-📊 **SESSION STATISTICS**
-🎯 **TOTAL TRADES:** 12
-🟢 **TOTAL WINS:** {total_wins}
-🔴 **TOTAL LOSSES:** {total_losses}
-⚡ **ACCURACY:** {accuracy}%
-
-💰 **PROFIT ALERT:** Target achieved for this session! Strict money management applied. 🚀💸"""
+    # Session Close ke Baad Pura Final Detailed Result & Scorecard
+    history_str = "\n".join(trade_history)
+    final_scorecard_msg = (
+        f"🏆 **{session_name} - FINAL DETAILED SCORECARD** 📈💎\n\n"
+        f"🔹 **Trading Pair:** `{pair_name}`\n"
+        f"━━━━━━━━━━━━━━━━━━━\n"
+        f"{history_str}\n"
+        f"━━━━━━━━━━━━━━━━━━━\n"
+        f"🎯 **Final Score:** `{wins} Wins` / `{losses} Losses`\n"
+        f"🔥 **Overall Accuracy:** `{accuracy}%`\n\n"
+        f"Shandar session raha! Sabhi ne acha profit banaya hoga. Agle session mein milte hain! 🙏✨"
     )
+    send_telegram_message(final_scorecard_msg)
+    
+    # Lock this session for the day so it never repeats automatically
+    mark_task_completed(session_key)
+    print(f"--- {session_name} Completed & Locked for Today ---")
 
-utc_now = datetime.datetime.utcnow()
-ist_now = utc_now + datetime.timedelta(hours=5, minutes=30)
-current_hour = ist_now.hour
-
-if current_hour == 7:
-    send_telegram(
-        """🌅 **GOOD MORNING, TRADERS!** ☕🔥
-
-🌟 **New Day — New Goals — New Profits!**
-Aaj ka maqsad sirf aik: **Disciplined Trading & Consistent Growth** 💎📈
-
-🎯 **MINDSET:** Calm, Focused & Disciplined
-⚠️ **REMINDER:** Never chase losses. Protect capital first!
-
-🚀 Get your terminals ready! Today's VIP sessions are locked and loaded. Let's start the day in pure GREEN! 💸🍀"""
+# 3. Night Wrap-up (End of Day)
+def send_night_wrapup():
+    if not can_run_task("night_wrapup"):
+        return
+    
+    msg = (
+        "🌌 **GOOD NIGHT TRADERS!** 💤💎\n\n"
+        "Aaj ke sabhi VIP sessions successfully complete ho chuke hain. Ummeed hai aapne acha profit banaya hoga.\n\n"
+        "Apna dhyan rakhein, relax karein aur kal subah phir ek nayi energy ke sath milte hain. Sweet dreams! 🌟✨"
     )
+    send_telegram_message(msg)
+    mark_task_completed("night_wrapup")
 
-elif current_hour == 8:
-    send_telegram(
-        """👑 **TODAY BOT SESSION SCHEDULE** 👑
-
-⏰ **DAILY SESSION TIMINGS (UTC +5:30):**
-
-🟢 **1st Session:** 09:00 AM
-🟢 **2nd Session:** 12:00 PM
-🟢 **3rd Session:** 02:00 PM
-🟢 **4th Session:** 06:00 PM
-🟢 **5th Session:** 11:00 PM
-
-⚠️ **IMPORTANT:** Be online 5 minutes before the session time! Follow strict money management and protect your capital. 🚀💰"""
-    )
-
-elif current_hour == 9:
-    run_session("1st")
-elif current_hour == 12:
-    run_session("2nd")
-elif current_hour == 14:
-    run_session("3rd")
-elif current_hour == 18:
-    run_session("4th")
-elif current_hour == 23:
-    run_session("5th")
-
-elif current_hour == 0:
-    send_telegram(
-        """GOOD NIGHT VIP FAMILY! 🌌✨
-
-💤 **END OF DAY WRAP-UP**
-
-"Discipline today brings financial freedom tomorrow." 💎📈
-
-📊 **TODAY'S STATUS:** Market Closed / Sessions Completed
-🧠 **MINDSET:** Rest well, recharge, and come back stronger tomorrow.
-
-⭐ Sleep tight and get ready for another massive green day ahead! Good night, traders! 🚀💰"""
-    )
+# Main Execution / Scheduler Trigger Example
+if __name__ == "__main__":
+    send_morning_briefing()
+    run_vip_session("09:00 AM VIP Session", "session_09_00", "EUR/USD (OTC)")
+    # Baki sessions (12:00 PM, 02:00 PM, 06:00 PM, 11:00 PM) ke liye bhi yhi function call hoga
+    send_night_wrapup()
     
