@@ -85,7 +85,7 @@ def run_vip_session(session_name, session_key, pair_name="EUR/USD (OTC)"):
         )
         send_telegram_message(signal_msg)
         
-        # 1 Minute Candle Duration simulation (Aap yahan actual trade duration rakhenge)
+        # 1 Minute Candle Duration simulation
         time.sleep(60)  
         
         # Simulated Result (WIN/LOSS)
@@ -105,7 +105,6 @@ def run_vip_session(session_name, session_key, pair_name="EUR/USD (OTC)"):
         send_telegram_message(result_msg)
         
         # Strict 5-Minute Gap Between Trades (300 seconds)
-        # Note: Testing ke liye aap ise kam kar sakte hain, par production mein 300 hi rahega
         if trade_no < total_trades:
             print(f"Waiting 5 minutes strict gap before Trade #{trade_no + 1}...")
             time.sleep(300)
