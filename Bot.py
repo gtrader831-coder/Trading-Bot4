@@ -1,33 +1,6 @@
 import datetime
-import json
 import os
 import time
-
-# State file to prevent duplicate runs on the same day
-STATE_FILE = "session_state.json"
-
-def load_state():
-    if os.path.exists(STATE_FILE):
-        with open(STATE_FILE, "r") as f:
-            return json.load(f)
-    return {}
-
-def save_state(state):
-    with open(STATE_FILE, "w") as f:
-        json.dump(state, f)
-
-def can_run_task(task_name):
-    today = datetime.date.today().isoformat()
-    state = load_state()
-    if state.get(task_name) == today:
-        return False  
-    return True
-
-def mark_task_completed(task_name):
-    today = datetime.date.today().isoformat()
-    state = load_state()
-    state[task_name] = today
-    save_state(state)
 
 def send_telegram_message(text):
     # Yahan apna Telegram API / Bot message send karne ka code lagayein
@@ -35,9 +8,6 @@ def send_telegram_message(text):
 
 # 1. Morning Briefing (7:00 AM)
 def send_morning_briefing():
-    if not can_run_task("morning_briefing"):
-        return
-    
     msg = (
         "🌅 **GOOD MORNING TRADERS!** ☕✨\n\n"
         "Naye din ki shuruaat ek nayi energy aur positive mindset ke sath hoti hai. "
@@ -51,14 +21,9 @@ def send_morning_briefing():
         "⚠️ **Risk Warning:** Hamesha apne risk management aur capital ke hisab se trade karein. Let's make it profitable! 🚀📈"
     )
     send_telegram_message(msg)
-    mark_task_completed("morning_briefing")
 
 # 2. Complete Trading Session (Start Notice, Pair Name, Exact 12 Trades, 5-Min Gap, Summary & Final Scorecard)
-def run_vip_session(session_name, session_key, pair_name="EUR/USD (OTC)"):
-    if not can_run_task(session_key):
-        print(f"[{session_name}] Aaj ke liye already run ho chuka hai. Dobara nahi chalega!")
-        return
-
+def run_vip_session(session_name, pair_name="EUR/USD (OTC)"):
     print(f"--- Starting {session_name} ---")
     
     # Session Start Notice
@@ -136,27 +101,20 @@ def run_vip_session(session_name, session_key, pair_name="EUR/USD (OTC)"):
         f"Shandar session raha! Sabhi ne acha profit banaya hoga. Agle session mein milte hain! 🙏✨"
     )
     send_telegram_message(final_scorecard_msg)
-    
-    # Lock this session for the day so it never repeats automatically
-    mark_task_completed(session_key)
-    print(f"--- {session_name} Completed & Locked for Today ---")
+    print(f"--- {session_name} Completed ---")
 
 # 3. Night Wrap-up (End of Day)
 def send_night_wrapup():
-    if not can_run_task("night_wrapup"):
-        return
-    
     msg = (
         "🌌 **GOOD NIGHT TRADERS!** 💤💎\n\n"
         "Aaj ke sabhi VIP sessions successfully complete ho chuke hain. Ummeed hai aapne acha profit banaya hoga.\n\n"
         "Apna dhyan rakhein, relax karein aur kal subah phir ek nayi energy ke sath milte hain. Sweet dreams! 🌟✨"
     )
     send_telegram_message(msg)
-    mark_task_completed("night_wrapup")
 
 # Main Execution / Scheduler Trigger Example
 if __name__ == "__main__":
     send_morning_briefing()
-    run_vip_session("09:00 AM VIP Session", "session_09_00", "EUR/USD (OTC)")
+    run_vip_session("09:00 AM VIP Session", "EUR/USD (OTC)")
     send_night_wrapup()
     
