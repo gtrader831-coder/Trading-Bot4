@@ -53,7 +53,7 @@ def send_morning_briefing():
     send_telegram_message(msg)
     mark_task_completed("morning_briefing")
 
-# 2. Complete Trading Session (Start Notice, Pair Name, 12 Trades with Results, Summary & Final Scorecard)
+# 2. Complete Trading Session (Start Notice, Pair Name, Exact 12 Trades, 5-Min Gap, Summary & Final Scorecard)
 def run_vip_session(session_name, session_key, pair_name="EUR/USD (OTC)"):
     if not can_run_task(session_key):
         print(f"[{session_name}] Aaj ke liye already run ho chuka hai. Dobara nahi chalega!")
@@ -68,23 +68,25 @@ def run_vip_session(session_name, session_key, pair_name="EUR/USD (OTC)"):
         f"⚡ Sabhi log ready ho jayein, kuch hi der mein signals aane shuru honge!"
     )
     send_telegram_message(start_msg)
-    time.sleep(2)
+    time.sleep(5)  # Initial pause before first trade
     
     wins = 0
     losses = 0
     total_trades = 12
     trade_history = []  # Har trade ka result store karne ke liye
 
-    # 12 Trades Loop with Pair Name & Trade Results
+    # Exact 12 Trades Loop
     for trade_no in range(1, total_trades + 1):
-        # Advance Signal Alert
+        # Advance Signal Alert with Pair Name
         signal_msg = (
             f"📊 **{session_name} | Trade #{trade_no} / {total_trades}** ⚡🎯\n"
             f"🔹 **Pair:** `{pair_name}`\n"
             f"⏳ Get Ready for Action (Next 1-Minute Candle)!"
         )
         send_telegram_message(signal_msg)
-        time.sleep(3)  # Simulation for trade duration / candle run
+        
+        # 1 Minute Candle Duration simulation (Aap yahan actual trade duration rakhenge)
+        time.sleep(60)  
         
         # Simulated Result (WIN/LOSS)
         result = "WIN 💰" if trade_no % 4 != 0 else "LOSS ❌"  
@@ -101,7 +103,12 @@ def run_vip_session(session_name, session_key, pair_name="EUR/USD (OTC)"):
             f"📌 **Status:** {result}"
         )
         send_telegram_message(result_msg)
-        time.sleep(2)  # 5-minute technical gap simulation between trades
+        
+        # Strict 5-Minute Gap Between Trades (300 seconds)
+        # Note: Testing ke liye aap ise kam kar sakte hain, par production mein 300 hi rahega
+        if trade_no < total_trades:
+            print(f"Waiting 5 minutes strict gap before Trade #{trade_no + 1}...")
+            time.sleep(300)
 
     # Session Close Summary Report
     accuracy = round((wins / total_trades) * 100, 2)
@@ -115,9 +122,9 @@ def run_vip_session(session_name, session_key, pair_name="EUR/USD (OTC)"):
         f"⭐ **Accuracy:** `{accuracy}%`"
     )
     send_telegram_message(summary_msg)
-    time.sleep(1)
+    time.sleep(2)
 
-    # Session Close ke Baad Pura Final Detailed Result & Scorecard
+    # Final Detailed Scorecard
     history_str = "\n".join(trade_history)
     final_scorecard_msg = (
         f"🏆 **{session_name} - FINAL DETAILED SCORECARD** 📈💎\n\n"
@@ -152,6 +159,5 @@ def send_night_wrapup():
 if __name__ == "__main__":
     send_morning_briefing()
     run_vip_session("09:00 AM VIP Session", "session_09_00", "EUR/USD (OTC)")
-    # Baki sessions (12:00 PM, 02:00 PM, 06:00 PM, 11:00 PM) ke liye bhi yhi function call hoga
     send_night_wrapup()
     
